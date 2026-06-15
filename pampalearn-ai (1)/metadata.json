@@ -1,0 +1,6 @@
+{
+  "name": "PampaLearn AI",
+  "description": "Plataforma de capacitación técnica, oficios modernos, tecnología e idiomas de alto impacto con soporte de IA.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

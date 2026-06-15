@@ -1,0 +1,82 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile with course subscriptions",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Unique identifier of the user" },
+        "name": { "type": "string", "description": "Display name" },
+        "email": { "type": "string", "description": "Verified email address" },
+        "purchased_courses": {
+          "type": "array",
+          "description": "List of course IDs purchased by the user"
+        }
+      },
+      "required": ["uid", "name", "email", "purchased_courses"]
+    },
+    "Book": {
+      "title": "Book",
+      "description": "A downloadable or readable guide PDF in the free library",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique book identifier" },
+        "title": { "type": "string", "description": "Title of the book" },
+        "cover_url": { "type": "string", "description": "Cover art image URL" },
+        "download_url": { "type": "string", "description": "Download or read-online PDF link" },
+        "description": { "type": "string", "description": "Short description of content" },
+        "category": { "type": "string", "description": "Category of the book" }
+      },
+      "required": ["id", "title", "cover_url", "download_url", "description", "category"]
+    },
+    "Course": {
+      "title": "Course",
+      "description": "Premium course details",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique course identifier" },
+        "title": { "type": "string", "description": "Course title" },
+        "description": { "type": "string", "description": "Brief description of the curriculum" },
+        "price": { "type": "number", "description": "Purchase price in USD" },
+        "thumbnail": { "type": "string", "description": "Image URL of course poster" },
+        "category": { "type": "string", "description": "Category (Oficios, Fitness)" },
+        "total_lessons": { "type": "integer", "description": "Count of total lessons in course" },
+        "video_url": { "type": "string", "description": "Custom preview Google Drive link for high-end cinema display" },
+        "brief_info": { "type": "string", "description": "Executive executive summary loaded from Firestore" },
+        "ai_instruction": { "type": "string", "description": "Specialized prompt context for course tutor sidebar" }
+      },
+      "required": ["id", "title", "description", "price", "thumbnail", "category", "total_lessons"]
+    },
+    "Lesson": {
+      "title": "Lesson",
+      "description": "A specific video or text lesson in a module of a course",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique lesson ID" },
+        "title": { "type": "string", "description": "Lesson title" },
+        "order": { "type": "integer", "description": "Sorting sequence order" },
+        "video_drive_url": { "type": "string", "description": "Google Drive embed URL of video (clean stream iframe)" },
+        "type": { "type": "string", "enum": ["video", "pdf"], "description": "Type of media" }
+      },
+      "required": ["id", "title", "order", "video_drive_url", "type"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "User",
+      "description": "User accounts"
+    },
+    "books/{bookId}": {
+      "schema": "Book",
+      "description": "Free library collection"
+    },
+    "courses/{courseId}": {
+      "schema": "Course",
+      "description": "Premium course definitions"
+    },
+    "courses/{courseId}/modules/{moduleId}/lessons/{lessonId}": {
+      "schema": "Lesson",
+      "description": "Lessons organized by module/course"
+    }
+  }
+}

@@ -1,0 +1,54 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Catch-all default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Global helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function hasPurchasedCourse(courseId) {
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        (
+          courseId in get(/databases/$(database)/documents/users/$(request.auth.uid)).data.purchased_courses ||
+          (
+            exists(/databases/$(database)/documents/courses/$(courseId)) &&
+            get(/databases/$(database)/documents/courses/$(courseId)).data.isFree == true
+          )
+        )
+      );
+    }
+
+    // Books: Public read-only, write allowed for seeding
+    match /books/{bookId} {
+      allow read: if true;
+      allow write: if isSignedIn();
+    }
+
+    // Users: Read and write only own profile data
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // Courses: Read only if user has purchased it or if course is free
+    match /courses/{courseId} {
+      allow read: if hasPurchasedCourse(courseId);
+      allow write: if false;
+    }
+
+    // Lessons recursive: Read only if parent course is purchased or free
+    match /courses/{courseId}/modules/{moduleId}/lessons/{lessonId} {
+      allow read: if hasPurchasedCourse(courseId);
+      allow write: if false;
+    }
+  }
+}
